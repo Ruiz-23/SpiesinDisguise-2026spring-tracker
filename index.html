@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spies in Disguise · 每周复习追踪</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f3;
+    --bg-tertiary: #efefec;
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6b67;
+    --border: rgba(0,0,0,0.12);
+    --border-md: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --rocket: #1a6ef5;
+    --cheetah: #d97b10;
+    --sloth: #5a9e4e;
+    --champ: #f5a623;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1c;
+      --bg-secondary: #2a2a27;
+      --bg-tertiary: #141412;
+      --text-primary: #f0ede8;
+      --text-secondary: #9a9893;
+      --border: rgba(255,255,255,0.10);
+      --border-md: rgba(255,255,255,0.20);
+    }
+  }
+
+  body {
+    font-family: 'Noto Sans SC', 'DM Sans', sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 0 0 3rem;
+  }
+
+  .app { max-width: 960px; margin: 0 auto; padding: 1rem 1rem 2rem; }
+
+  .header { text-align: center; padding: 1.8rem 0 1rem; }
+  .header h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px; font-weight: 700;
+    letter-spacing: 3px; color: var(--text-primary);
+  }
+  .header p { font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px; }
+
+  .week-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin-bottom: 1rem; padding: 10px 16px;
+    background: var(--bg-primary); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+  .week-label { font-family: 'Orbitron', monospace; font-size: 13px; color: var(--text-secondary); }
+  .week-nav { display: flex; gap: 6px; }
+  .week-nav button {
+    border: 0.5px solid var(--border); background: transparent;
+    border-radius: var(--radius-md); padding: 5px 13px; font-size: 13px;
+    cursor: pointer; color: var(--text-primary); transition: background .15s;
+  }
+  .week-nav button:hover { background: var(--bg-secondary); }
+
+  .tabs {
+    display: flex; gap: 2px;
+    border-bottom: 0.5px solid var(--border); margin-bottom: 1rem;
+  }
+  .tab {
+    padding: 9px 18px; font-size: 13px; cursor: pointer;
+    color: var(--text-secondary); border-bottom: 2px solid transparent;
+    margin-bottom: -0.5px; transition: color .15s;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .tab.active { color: var(--text-primary); border-bottom-color: var(--rocket); font-weight: 500; }
+  .tab:hover { color: var(--text-primary); }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 1rem; }
+  .metric-card { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 13px 16px; }
+  .metric-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .metric-val { font-size: 22px; font-weight: 500; font-family: 'Orbitron', monospace; color: var(--text-primary); }
+
+  .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 10px; }
+  .s-card {
+    background: var(--bg-primary); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color .2s, transform .15s;
+  }
+  .s-card:hover { border-color: var(--border-md); transform: translateY(-1px); }
+  .s-card.champ { border-color: var(--champ); border-width: 1.5px; }
+
+  .icon-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .anim-icon { font-size: 30px; display: block; line-height: 1; }
+
+  .rocket-anim  { animation: rocketFly   1.4s ease-in-out infinite alternate; }
+  .cheetah-anim { animation: cheetahRun   .5s ease-in-out infinite alternate; }
+  .sloth-anim   { animation: slothSway   2.8s ease-in-out infinite alternate; }
+  .trophy-anim  { animation: trophyBounce .8s ease-in-out infinite alternate; }
+
+  @keyframes rocketFly    { from { transform: translateY(3px)  rotate(-8deg);  } to { transform: translateY(-6px) rotate(-16deg); } }
+  @keyframes cheetahRun   { from { transform: translateX(-2px) scaleX(1);      } to { transform: translateX(4px)  scaleX(1.05);   } }
+  @keyframes slothSway    { from { transform: rotate(-6deg) translateY(0);      } to { transform: rotate(6deg)  translateY(4px);  } }
+  @keyframes trophyBounce { from { transform: translateY(0)   scale(1);         } to { transform: translateY(-6px) scale(1.1);    } }
+
+  .speed-trail {
+    position: absolute; right: -5px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 3px;
+    animation: trailFade 1.4s ease-in-out infinite alternate;
+  }
+  @keyframes trailFade { from { opacity: 0; } to { opacity: .55; } }
+  .trail-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--rocket); }
+
+  .cheetah-lines {
+    position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 4px;
+    animation: lineFlash .5s ease-in-out infinite alternate;
+  }
+  @keyframes lineFlash { from { opacity: 0; } to { opacity: .5; } }
+  .speed-line { height: 1.5px; background: var(--cheetah); border-radius: 1px; }
+
+  .s-info { flex: 1; min-width: 0; }
+  .s-name { font-size: 14px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .s-stats { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+  .s-bar-wrap { height: 4px; border-radius: 2px; background: var(--border); margin-top: 7px; overflow: hidden; }
+  .s-bar-fill { height: 100%; border-radius: 2px; transition: width .7s cubic-bezier(.4,0,.2,1); }
+
+  .log-form {
+    background: var(--bg-primary); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.2rem; margin-bottom: 1rem;
+  }
+  .log-form h3 { font-size: 11px; letter-spacing: 1px; margin-bottom: 1rem; color: var(--text-secondary); font-family: 'Orbitron', monospace; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
+  .form-group label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  select, input[type=number] {
+    width: 100%; padding: 8px 10px; font-size: 14px;
+    border: 0.5px solid var(--border); border-radius: var(--radius-md);
+    background: var(--bg-primary); color: var(--text-primary);
+    font-family: 'Noto Sans SC', sans-serif; outline: none;
+    transition: border-color .15s;
+  }
+  select:focus, input[type=number]:focus { border-color: var(--rocket); }
+
+  .btn {
+    border: 0.5px solid var(--border); background: transparent;
+    border-radius: var(--radius-md); padding: 8px 14px; font-size: 13px;
+    cursor: pointer; color: var(--text-primary); font-family: 'Noto Sans SC', sans-serif;
+    transition: background .15s;
+  }
+  .btn:hover { background: var(--bg-secondary); }
+  .btn-primary { background: var(--rocket); color: #fff; border-color: var(--rocket); font-weight: 500; }
+  .btn-primary:hover { opacity: .88; background: var(--rocket); }
+
+  .log-panel { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .log-panel-hd { padding: 10px 14px; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .log-list { max-height: 380px; overflow-y: auto; }
+  .log-item { display: flex; align-items: center; padding: 9px 14px; border-bottom: 0.5px solid var(--border); gap: 10px; font-size: 13px; }
+  .log-item:last-child { border-bottom: none; }
+  .log-del { cursor: pointer; color: var(--text-secondary); font-size: 17px; padding: 0 4px; opacity: .35; flex-shrink: 0; margin-left: auto; transition: opacity .15s, color .15s; }
+  .log-del:hover { opacity: 1; color: #e24b4a; }
+  .empty { text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 13px; }
+
+  .chart-wrap { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem; margin-bottom: 1rem; }
+  .chart-title { font-size: 11px; letter-spacing: .8px; color: var(--text-secondary); margin-bottom: 1rem; font-family: 'Orbitron', monospace; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-nm { width: 90px; font-size: 12px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 22px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 7px; font-size: 11px; font-weight: 500; color: #fff; transition: width .7s cubic-bezier(.4,0,.2,1); }
+  .bar-v { font-size: 11px; color: var(--text-secondary); width: 44px; text-align: right; font-family: 'Orbitron', monospace; flex-shrink: 0; }
+
+  .toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--rocket); color: #fff;
+    padding: 10px 18px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500;
+    opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 580px) {
+    .form-row { grid-template-columns: 1fr 1fr; }
+    .student-grid { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 360px) {
+    .student-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <h1>SPIES IN DISGUISE</h1>
+    <p>每周复习打卡追踪系统</p>
+  </div>
+
+  <div class="week-bar">
+    <span class="week-label" id="weekLabel">第 1 周</span>
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">&#9664;</button>
+      <button onclick="changeWeek(1)">&#9654;</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('board',this)">打卡墙</div>
+    <div class="tab" onclick="switchTab('log',this)">记录复习</div>
+    <div class="tab" onclick="switchTab('chart',this)">对比图</div>
+  </div>
+
+  <div id="board" class="section active">
+    <div class="grid-2">
+      <div class="metric-card">
+        <div class="metric-label">本周累计分钟</div>
+        <div class="metric-val" id="m-total">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">平均复习天数</div>
+        <div class="metric-val" id="m-days">0.0</div>
+      </div>
+    </div>
+    <div class="student-grid" id="studentGrid"></div>
+  </div>
+
+  <div id="log" class="section">
+    <div class="log-form">
+      <h3>记录复习时间</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>学生姓名</label>
+          <select id="selStudent"></select>
+        </div>
+        <div class="form-group">
+          <label>复习分钟数</label>
+          <input type="number" id="inpMinutes" min="1" max="300" placeholder="如：20">
+        </div>
+        <div class="form-group">
+          <label>第几天（1–7）</label>
+          <input type="number" id="inpDay" min="1" max="7" placeholder="1–7">
+        </div>
+        <button class="btn btn-primary" onclick="logReview()" style="height:38px">+ 记录</button>
+      </div>
+    </div>
+    <div class="log-panel">
+      <div class="log-panel-hd">
+        <span style="font-size:11px;letter-spacing:.8px;color:var(--text-secondary);font-family:'Orbitron',monospace">本周记录</span>
+        <select id="filterStudent" onchange="renderLogs()" style="font-size:12px;padding:4px 8px;width:auto">
+          <option value="all">全部学生</option>
+        </select>
+      </div>
+      <div id="logList" class="log-list"></div>
+    </div>
+  </div>
+
+  <div id="chart" class="section">
+    <div class="chart-wrap">
+      <div class="chart-title">复习分钟数对比</div>
+      <div id="barChart"></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">复习天数对比</div>
+      <div id="daysChart"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STUDENTS = [
+  '欧阳逸忧','李思斓','李明泽','于泓念','白安晴',
+  '陈奕昕(仔仔)','叶元培','孙沐泽','朱语桐','赵希豪',
+  '王可为','何禹墨','代景月','姬蕴航'
+];
+const N = STUDENTS.length;
+const ROCKET_N = 5, MID_N = 10;
+const COLORS = { rocket:'#1a6ef5', cheetah:'#d97b10', sloth:'#5a9e4e', champ:'#f5a623' };
+
+let state = { week: 1, logs: [] };
+
+function save() { try { localStorage.setItem('sid_v4', JSON.stringify(state)); } catch(e){} }
+function load() { try { const d = localStorage.getItem('sid_v4'); if (d) state = JSON.parse(d); } catch(e){} }
+
+function getSummary(w) {
+  const logs = state.logs.filter(l => l.week === w);
+  const map = {};
+  STUDENTS.forEach(s => { map[s] = { minutes: 0, days: new Set() }; });
+  logs.forEach(l => { if (map[l.student]) { map[l.student].minutes += l.minutes; map[l.student].days.add(l.day); } });
+  return STUDENTS.map(s => ({ name: s, minutes: map[s].minutes, days: map[s].days.size }))
+    .sort((a, b) => b.minutes - a.minutes || b.days - a.days);
+}
+
+function getTier(rank) {
+  if (rank === 1) return 'champ';
+  if (rank <= ROCKET_N) return 'rocket';
+  if (rank <= MID_N) return 'cheetah';
+  return 'sloth';
+}
+
+function tierIcon(tier, minutes) {
+  if (tier === 'champ' && minutes > 0) return { char: '🏆', anim: 'trophy-anim' };
+  if (tier === 'rocket')  return { char: '🚀', anim: 'rocket-anim' };
+  if (tier === 'cheetah') return { char: '🐆', anim: 'cheetah-anim' };
+  return { char: '🦥', anim: 'sloth-anim' };
+}
+
+function extraDecor(tier) {
+  if (tier === 'rocket') return `<div class="speed-trail"><div class="trail-dot"></div><div class="trail-dot"></div><div class="trail-dot"></div></div>`;
+  if (tier === 'cheetah') return `<div class="cheetah-lines"><div class="speed-line" style="width:10px"></div><div class="speed-line" style="width:7px"></div><div class="speed-line" style="width:5px"></div></div>`;
+  return '';
+}
+
+function renderBoard() {
+  const data = getSummary(state.week);
+  const maxMin = Math.max(1, ...data.map(d => d.minutes));
+  const totalMin = data.reduce((a, b) => a + b.minutes, 0);
+  const avgDays = (data.reduce((a, b) => a + b.days, 0) / N).toFixed(1);
+  document.getElementById('m-total').textContent = totalMin;
+  document.getElementById('m-days').textContent = avgDays;
+
+  const grid = document.getElementById('studentGrid');
+  grid.innerHTML = data.map((s, i) => {
+    const tier = getTier(i + 1);
+    const ico = tierIcon(tier, s.minutes);
+    const isChamp = tier === 'champ' && s.minutes > 0;
+    const color = isChamp ? COLORS.champ : (COLORS[tier] || COLORS.sloth);
+    const pct = Math.round(s.minutes / maxMin * 100);
+    return `<div class="s-card${isChamp ? ' champ' : ''}">
+      <div class="icon-wrap">
+        <span class="anim-icon ${ico.anim}">${ico.char}</span>
+        ${extraDecor(isChamp ? 'champ' : tier)}
+      </div>
+      <div class="s-info">
+        <div class="s-name">${s.name}</div>
+        <div class="s-stats">${s.minutes} 分钟 · ${s.days} 天</div>
+        <div class="s-bar-wrap"><div class="s-bar-fill" style="width:${s.minutes ? Math.max(pct, 4) : 0}%;background:${color}"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLogs() {
+  const filter = document.getElementById('filterStudent').value;
+  const logs = [...state.logs].reverse()
+    .filter(l => l.week === state.week && (filter === 'all' || l.student === filter));
+  const el = document.getElementById('logList');
+  if (!logs.length) { el.innerHTML = '<div class="empty">本周暂无记录</div>'; return; }
+  el.innerHTML = logs.map(l => `<div class="log-item">
+    <span style="font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.student}</span>
+    <span style="color:var(--text-secondary);font-size:12px;flex-shrink:0">第${l.day}天</span>
+    <span style="font-family:'Orbitron',monospace;font-size:12px;flex-shrink:0">${l.minutes} 分钟</span>
+    <span class="log-del" onclick="deleteLog('${l.id}')">&#215;</span>
+  </div>`).join('');
+}
+
+function renderChart() {
+  const data = getSummary(state.week);
+  const maxMin = Math.max(1, ...data.map(d => d.minutes));
+  const maxDays = Math.max(1, ...data.map(d => d.days));
+
+  document.getElementById('barChart').innerHTML = data.map((s, i) => {
+    const tier = getTier(i + 1);
+    const isChamp = tier === 'champ' && s.minutes > 0;
+    const ico = tierIcon(tier, s.minutes);
+    const color = isChamp ? COLORS.champ : (COLORS[tier] || COLORS.sloth);
+    const pct = maxMin > 0 ? Math.round(s.minutes / maxMin * 100) : 0;
+    const nm = s.name.replace('(仔仔)', '');
+    return `<div class="bar-row">
+      <div class="bar-nm">${ico.char} ${nm}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${s.minutes ? Math.max(pct, 2) : 0}%;background:${color}">${s.minutes > 10 ? s.minutes + '' : ''}</div></div>
+      <div class="bar-v">${s.minutes}m</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('daysChart').innerHTML = data.map((s, i) => {
+    const tier = getTier(i + 1);
+    const isChamp = tier === 'champ' && s.minutes > 0;
+    const ico = tierIcon(tier, s.minutes);
+    const color = isChamp ? COLORS.champ : (COLORS[tier] || COLORS.sloth);
+    const pct = maxDays > 0 ? Math.round(s.days / maxDays * 100) : 0;
+    const nm = s.name.replace('(仔仔)', '');
+    return `<div class="bar-row">
+      <div class="bar-nm">${ico.char} ${nm}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${s.days ? Math.max(pct, 6) : 0}%;background:${color}">${s.days > 0 ? s.days + '天' : ''}</div></div>
+      <div class="bar-v">${s.days}天</div>
+    </div>`;
+  }).join('');
+}
+
+function logReview() {
+  const student = document.getElementById('selStudent').value;
+  const minutes = parseInt(document.getElementById('inpMinutes').value) || 0;
+  const day = parseInt(document.getElementById('inpDay').value) || 0;
+  if (!student || minutes < 1 || day < 1 || day > 7) { showToast('请正确填写所有字段'); return; }
+  if (state.logs.find(l => l.week === state.week && l.student === student && l.day === day)) {
+    showToast('该学生本天已有记录！'); return;
+  }
+  state.logs.push({ id: Date.now() + '', week: state.week, student, minutes, day });
+  save(); renderBoard(); renderLogs(); renderChart();
+  document.getElementById('inpMinutes').value = '';
+  document.getElementById('inpDay').value = '';
+  showToast('记录成功 ✓');
+}
+
+function deleteLog(id) {
+  state.logs = state.logs.filter(l => l.id !== id);
+  save(); renderBoard(); renderLogs(); renderChart();
+}
+
+function changeWeek(d) {
+  const nw = state.week + d;
+  if (nw < 1 || nw > 52) return;
+  state.week = nw;
+  document.getElementById('weekLabel').textContent = '第 ' + state.week + ' 周';
+  save(); renderBoard(); renderLogs(); renderChart();
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'chart') renderChart();
+  if (id === 'board') renderBoard();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function init() {
+  load();
+  const sel = document.getElementById('selStudent');
+  const fsel = document.getElementById('filterStudent');
+  STUDENTS.forEach(s => {
+    sel.innerHTML += `<option>${s}</option>`;
+    fsel.innerHTML += `<option value="${s}">${s}</option>`;
+  });
+  document.getElementById('weekLabel').textContent = '第 ' + state.week + ' 周';
+  renderBoard(); renderLogs();
+}
+init();
+</script>
+</body>
+</html>
