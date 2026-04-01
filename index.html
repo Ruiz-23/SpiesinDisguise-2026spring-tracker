@@ -82,7 +82,6 @@
   .tab.active { color: var(--text-primary); border-bottom-color: var(--rocket); font-weight: 500; }
   .tab:hover { color: var(--text-primary); }
 
-  /* ── Sections ── */
   .section { display: none; }
   .section.active { display: block; }
 
@@ -146,13 +145,13 @@
   .log-form h3 { font-size: 11px; letter-spacing: 1px; margin-bottom: 1rem; color: var(--text-secondary); font-family: 'Orbitron', monospace; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
   .form-group label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-  select, input[type=number] {
+  select, input[type=number], input[type=text] {
     width: 100%; padding: 8px 10px; font-size: 14px;
     border: 0.5px solid var(--border); border-radius: var(--radius-md);
     background: var(--bg-primary); color: var(--text-primary);
     font-family: 'Noto Sans SC', sans-serif; outline: none; transition: border-color .15s;
   }
-  select:focus, input[type=number]:focus { border-color: var(--rocket); }
+  select:focus, input:focus { border-color: var(--rocket); }
 
   .btn {
     border: 0.5px solid var(--border); background: transparent;
@@ -162,8 +161,10 @@
   .btn:hover { background: var(--bg-secondary); }
   .btn-primary { background: var(--rocket); color: #fff; border-color: var(--rocket); font-weight: 500; }
   .btn-primary:hover { opacity: .88; background: var(--rocket); }
+  .btn-danger { background: #e24b4a; color: #fff; border-color: #e24b4a; font-weight: 500; }
+  .btn-danger:hover { opacity: .88; background: #e24b4a; }
 
-  /* ── Student summary panel ── */
+  /* ── Summary panel ── */
   .stu-summary {
     background: var(--bg-primary); border: 0.5px solid var(--border);
     border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem;
@@ -174,7 +175,6 @@
   }
   .stu-summary-hd-left { font-size: 11px; letter-spacing: .8px; color: var(--text-secondary); font-family: 'Orbitron', monospace; }
 
-  /* ── Stat strip ── */
   .stat-strip {
     display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
     gap: 8px; padding: 12px 14px; border-bottom: 0.5px solid var(--border);
@@ -192,7 +192,7 @@
     border-bottom: 0.5px solid var(--border); gap: 10px; font-size: 13px;
   }
   .log-item:last-child { border-bottom: none; }
-  .day-badge {
+  .days-badge {
     font-size: 11px; font-family: 'Orbitron', monospace;
     background: var(--bg-secondary); border-radius: var(--radius-md);
     padding: 2px 8px; color: var(--text-secondary); flex-shrink: 0;
@@ -210,6 +210,18 @@
   .bar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 7px; font-size: 11px; font-weight: 500; color: #fff; transition: width .7s cubic-bezier(.4,0,.2,1); }
   .bar-v { font-size: 11px; color: var(--text-secondary); width: 44px; text-align: right; font-family: 'Orbitron', monospace; flex-shrink: 0; }
 
+  /* ── Roster ── */
+  .roster-panel { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
+  .roster-hd { padding: 10px 14px; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .roster-hd-title { font-size: 11px; letter-spacing: .8px; color: var(--text-secondary); font-family: 'Orbitron', monospace; }
+  .roster-list { padding: 8px 0; }
+  .roster-row { display: flex; align-items: center; gap: 8px; padding: 5px 14px; }
+  .roster-num { font-size: 12px; font-family: 'Orbitron', monospace; color: var(--text-secondary); width: 22px; flex-shrink: 0; text-align: right; }
+  .roster-input { flex: 1; padding: 6px 10px; font-size: 14px; }
+  .roster-save-btn { padding: 5px 10px; font-size: 12px; border: 0.5px solid var(--border); border-radius: var(--radius-md); background: transparent; color: var(--rocket); cursor: pointer; white-space: nowrap; transition: background .15s; }
+  .roster-save-btn:hover { background: var(--bg-secondary); }
+  .roster-add { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 0.5px solid var(--border); margin-top: 4px; }
+
   /* ── Toast ── */
   .toast {
     position: fixed; bottom: 1.5rem; right: 1.5rem;
@@ -225,7 +237,6 @@
     .form-row { grid-template-columns: 1fr 1fr; }
     .student-grid { grid-template-columns: 1fr 1fr; }
     .grid-2 { grid-template-columns: 1fr 1fr; }
-    .stat-strip { grid-template-columns: repeat(3, minmax(0,1fr)); }
   }
   @media (max-width: 360px) {
     .student-grid { grid-template-columns: 1fr; }
@@ -252,6 +263,7 @@
     <div class="tab active" onclick="switchTab('board',this)">打卡墙</div>
     <div class="tab" onclick="switchTab('log',this)">记录复习</div>
     <div class="tab" onclick="switchTab('chart',this)">对比图</div>
+    <div class="tab" onclick="switchTab('roster',this)">学生名单</div>
   </div>
 
   <!-- BOARD -->
@@ -279,12 +291,12 @@
           <select id="selStudent"></select>
         </div>
         <div class="form-group">
-          <label>复习总时长</label>
-          <input type="number" id="inpMinutes" min="1" max="300" placeholder="如：20">
+          <label>复习总时长（分钟）</label>
+          <input type="number" id="inpMinutes" min="1" max="9999" placeholder="如：120">
         </div>
         <div class="form-group">
           <label>总天数（1–7）</label>
-          <input type="number" id="inpDay" min="1" max="7" placeholder="1–7">
+          <input type="number" id="inpDays" min="1" max="7" placeholder="1–7">
         </div>
         <button class="btn btn-primary" onclick="logReview()" style="height:38px">+ 记录</button>
       </div>
@@ -334,37 +346,74 @@
       <div id="daysChart"></div>
     </div>
   </div>
+
+  <!-- ROSTER -->
+  <div id="roster" class="section">
+    <div class="roster-panel">
+      <div class="roster-hd">
+        <span class="roster-hd-title">学生名单管理</span>
+        <span style="font-size:12px;color:var(--text-secondary)" id="rosterCount"></span>
+      </div>
+      <div class="roster-list" id="rosterList"></div>
+      <div class="roster-add">
+        <input type="text" id="newNameInput" placeholder="输入新学生姓名" style="flex:1">
+        <button class="btn btn-primary" onclick="addStudent()" style="white-space:nowrap">+ 添加</button>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-secondary);text-align:center;padding-bottom:.5rem">修改姓名后点击「保存」，删除学生将同时删除其所有记录</p>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const STUDENTS = [
-  '欧阳逸忧','李思斓','李明泽','于泓念','白安晴',
+const DEFAULT_STUDENTS = [
+  '欧阳逸忱','李思斓','李明泽','于泓念','白安晴',
   '陈奕昕(仔仔)','叶元培','孙沐泽','朱语桐','赵希豪',
   '王可为','何禹墨','代景月','姬蕴航'
 ];
-const N = STUDENTS.length;
 const COLORS = { rocket:'#1a6ef5', cheetah:'#d97b10', sloth:'#5a9e4e', champ:'#f5a623' };
 
-let state = { week: 1, logs: [] };
+let state = { week: 1, logs: [], students: [...DEFAULT_STUDENTS] };
 
-function save() { try { localStorage.setItem('sid_v4', JSON.stringify(state)); } catch(e){} }
-function load() { try { const d = localStorage.getItem('sid_v4'); if (d) state = JSON.parse(d); } catch(e){} }
+function save() {
+  try { localStorage.setItem('sid_v9', JSON.stringify(state)); } catch(e) {}
+}
+function load() {
+  try {
+    const d = localStorage.getItem('sid_v9');
+    if (d) {
+      const p = JSON.parse(d);
+      state = { ...state, ...p };
+      if (!state.students || !state.students.length) state.students = [...DEFAULT_STUDENTS];
+    }
+  } catch(e) {}
+}
+
+/* One log entry per student per week: { id, week, student, minutes, days }
+   "days" = total number of days the student reviewed that week (1–7).
+   All three displayed values (总天数 input / 累计复习天数 / log badge) use this same field. */
 
 function getSummary(w) {
   const logs = state.logs.filter(l => l.week === w);
   const map = {};
-  STUDENTS.forEach(s => { map[s] = { minutes: 0, days: new Set() }; });
-  logs.forEach(l => { if (map[l.student]) { map[l.student].minutes += l.minutes; map[l.student].days.add(l.day); } });
-  return STUDENTS.map(s => ({ name: s, minutes: map[s].minutes, days: map[s].days.size }))
+  state.students.forEach(s => { map[s] = { minutes: 0, days: 0 }; });
+  logs.forEach(l => {
+    if (map[l.student] !== undefined) {
+      map[l.student].minutes = l.minutes;
+      map[l.student].days    = l.days;
+    }
+  });
+  return state.students
+    .map(s => ({ name: s, minutes: map[s].minutes, days: map[s].days }))
     .sort((a, b) => b.minutes - a.minutes || b.days - a.days);
 }
 
-function getTier(rank) {
-  if (rank === 1) return 'champ';
-  if (rank <= 5)  return 'rocket';
-  if (rank <= 10) return 'cheetah';
+function getTier(rank, total) {
+  const top = Math.ceil(total / 3), mid = Math.ceil(2 * total / 3);
+  if (rank === 1)    return 'champ';
+  if (rank <= top)   return 'rocket';
+  if (rank <= mid)   return 'cheetah';
   return 'sloth';
 }
 
@@ -381,14 +430,29 @@ function extraDecor(tier) {
   return '';
 }
 
+function rebuildSelects() {
+  const sel  = document.getElementById('selStudent');
+  const fsel = document.getElementById('filterStudent');
+  const prevSel = sel.value, prevFsel = fsel.value;
+  sel.innerHTML  = '';
+  fsel.innerHTML = '<option value="all">全班汇总</option>';
+  state.students.forEach(s => {
+    sel.innerHTML  += `<option>${s}</option>`;
+    fsel.innerHTML += `<option value="${s}">${s}</option>`;
+  });
+  if (state.students.includes(prevSel))  sel.value  = prevSel;
+  if (state.students.includes(prevFsel)) fsel.value = prevFsel;
+}
+
 function renderBoard() {
-  const data = getSummary(state.week);
+  const data   = getSummary(state.week);
+  const n      = state.students.length || 1;
   const maxMin = Math.max(1, ...data.map(d => d.minutes));
   document.getElementById('m-total').textContent = data.reduce((a, b) => a + b.minutes, 0);
-  document.getElementById('m-days').textContent  = (data.reduce((a, b) => a + b.days, 0) / N).toFixed(1);
+  document.getElementById('m-days').textContent  = (data.reduce((a, b) => a + b.days, 0) / n).toFixed(1);
 
   document.getElementById('studentGrid').innerHTML = data.map((s, i) => {
-    const tier    = getTier(i + 1);
+    const tier    = getTier(i + 1, n);
     const ico     = tierIcon(tier, s.minutes);
     const isChamp = tier === 'champ' && s.minutes > 0;
     const color   = isChamp ? COLORS.champ : (COLORS[tier] || COLORS.sloth);
@@ -413,72 +477,115 @@ function renderLogs() {
   const filtered = filter === 'all' ? weekLogs : weekLogs.filter(l => l.student === filter);
 
   const totalMinutes = filtered.reduce((a, b) => a + b.minutes, 0);
-  const uniqueDays   = filter === 'all'
-    ? new Set(filtered.map(l => l.day + '|' + l.student)).size
-    : new Set(filtered.map(l => l.day)).size;
-  const avg = uniqueDays > 0 ? (totalMinutes / uniqueDays).toFixed(1) : '—';
+  const totalDays    = filtered.reduce((a, b) => a + b.days,    0);
+  const avg          = totalDays > 0 ? (totalMinutes / totalDays).toFixed(1) : '—';
 
   document.getElementById('ss-minutes').textContent = totalMinutes;
-  document.getElementById('ss-days').textContent    = uniqueDays;
+  document.getElementById('ss-days').textContent    = totalDays;
   document.getElementById('ss-avg').textContent     = avg;
 
-  const sorted = [...filtered].sort((a, b) => a.day - b.day || a.student.localeCompare(b.student));
+  const sorted = [...filtered].sort((a, b) => b.minutes - a.minutes);
   const el = document.getElementById('logList');
   if (!sorted.length) { el.innerHTML = '<div class="empty">本周暂无记录</div>'; return; }
   el.innerHTML = sorted.map(l => `<div class="log-item">
-    <span class="day-badge">第${l.day}天</span>
+    <span class="days-badge">共${l.days}天</span>
     <span style="font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.student}</span>
-    <span style="font-family:'Orbitron',monospace;font-size:12px;flex-shrink:0;color:var(--text-primary)">${l.minutes}<span style="font-size:10px;color:var(--text-secondary);margin-left:2px">分钟</span></span>
+    <span style="font-family:'Orbitron',monospace;font-size:12px;flex-shrink:0">${l.minutes}<span style="font-size:10px;color:var(--text-secondary);margin-left:2px">分钟</span></span>
     <span class="log-del" onclick="deleteLog('${l.id}')">&#215;</span>
   </div>`).join('');
 }
 
 function renderChart() {
   const data    = getSummary(state.week);
+  const n       = state.students.length || 1;
   const maxMin  = Math.max(1, ...data.map(d => d.minutes));
   const maxDays = Math.max(1, ...data.map(d => d.days));
 
   document.getElementById('barChart').innerHTML = data.map((s, i) => {
-    const tier    = getTier(i + 1);
+    const tier    = getTier(i + 1, n);
     const isChamp = tier === 'champ' && s.minutes > 0;
     const ico     = tierIcon(tier, s.minutes);
     const color   = isChamp ? COLORS.champ : (COLORS[tier] || COLORS.sloth);
     const pct     = maxMin > 0 ? Math.round(s.minutes / maxMin * 100) : 0;
-    const nm      = s.name.replace('(仔仔)', '');
     return `<div class="bar-row">
-      <div class="bar-nm">${ico.char} ${nm}</div>
+      <div class="bar-nm">${ico.char} ${s.name}</div>
       <div class="bar-track"><div class="bar-fill" style="width:${s.minutes ? Math.max(pct, 2) : 0}%;background:${color}">${s.minutes > 10 ? s.minutes : ''}</div></div>
       <div class="bar-v">${s.minutes}m</div>
     </div>`;
   }).join('');
 
   document.getElementById('daysChart').innerHTML = data.map((s, i) => {
-    const tier    = getTier(i + 1);
+    const tier    = getTier(i + 1, n);
     const isChamp = tier === 'champ' && s.minutes > 0;
     const ico     = tierIcon(tier, s.minutes);
     const color   = isChamp ? COLORS.champ : (COLORS[tier] || COLORS.sloth);
     const pct     = maxDays > 0 ? Math.round(s.days / maxDays * 100) : 0;
-    const nm      = s.name.replace('(仔仔)', '');
     return `<div class="bar-row">
-      <div class="bar-nm">${ico.char} ${nm}</div>
+      <div class="bar-nm">${ico.char} ${s.name}</div>
       <div class="bar-track"><div class="bar-fill" style="width:${s.days ? Math.max(pct, 6) : 0}%;background:${color}">${s.days > 0 ? s.days + '天' : ''}</div></div>
       <div class="bar-v">${s.days}天</div>
     </div>`;
   }).join('');
 }
 
+function renderRoster() {
+  document.getElementById('rosterCount').textContent = `共 ${state.students.length} 名学生`;
+  document.getElementById('rosterList').innerHTML = state.students.map((s, i) => `
+    <div class="roster-row">
+      <span class="roster-num">${i + 1}</span>
+      <input type="text" class="roster-input" value="${s}" id="ri_${i}" onkeydown="if(event.key==='Enter')saveStudent(${i})">
+      <button class="roster-save-btn" onclick="saveStudent(${i})">保存</button>
+      <button class="btn btn-danger" style="padding:4px 8px;font-size:12px" onclick="removeStudent(${i})">删除</button>
+    </div>`).join('');
+}
+
+function saveStudent(i) {
+  const val = document.getElementById('ri_' + i).value.trim();
+  if (!val) { showToast('姓名不能为空'); return; }
+  if (state.students.includes(val) && state.students[i] !== val) { showToast('该姓名已存在'); return; }
+  const old = state.students[i];
+  state.students[i] = val;
+  state.logs = state.logs.map(l => l.student === old ? { ...l, student: val } : l);
+  save(); rebuildSelects(); renderBoard(); renderLogs(); renderChart(); renderRoster();
+  showToast('已保存 ✓');
+}
+
+function removeStudent(i) {
+  const name = state.students[i];
+  if (!confirm(`确定删除「${name}」及其所有记录吗？`)) return;
+  state.students.splice(i, 1);
+  state.logs = state.logs.filter(l => l.student !== name);
+  save(); rebuildSelects(); renderBoard(); renderLogs(); renderChart(); renderRoster();
+  showToast('已删除');
+}
+
+function addStudent() {
+  const val = document.getElementById('newNameInput').value.trim();
+  if (!val) { showToast('请输入姓名'); return; }
+  if (state.students.includes(val)) { showToast('该姓名已存在'); return; }
+  state.students.push(val);
+  document.getElementById('newNameInput').value = '';
+  save(); rebuildSelects(); renderBoard(); renderLogs(); renderChart(); renderRoster();
+  showToast('已添加 ✓');
+}
+
 function logReview() {
   const student = document.getElementById('selStudent').value;
   const minutes = parseInt(document.getElementById('inpMinutes').value) || 0;
-  const day     = parseInt(document.getElementById('inpDay').value)     || 0;
-  if (!student || minutes < 1 || day < 1 || day > 7) { showToast('请正确填写所有字段'); return; }
-  if (state.logs.find(l => l.week === state.week && l.student === student && l.day === day)) {
-    showToast('该学生本天已有记录！'); return;
+  const days    = parseInt(document.getElementById('inpDays').value)    || 0;
+  if (!student || minutes < 1 || days < 1 || days > 7) { showToast('请正确填写所有字段'); return; }
+
+  const existing = state.logs.findIndex(l => l.week === state.week && l.student === student);
+  const entry = { id: Date.now() + '', week: state.week, student, minutes, days };
+  if (existing >= 0) {
+    if (!confirm(`${student} 本周已有记录，是否覆盖？`)) return;
+    state.logs[existing] = entry;
+  } else {
+    state.logs.push(entry);
   }
-  state.logs.push({ id: Date.now() + '', week: state.week, student, minutes, day });
   save(); renderBoard(); renderLogs(); renderChart();
   document.getElementById('inpMinutes').value = '';
-  document.getElementById('inpDay').value     = '';
+  document.getElementById('inpDays').value    = '';
   showToast('记录成功 ✓');
 }
 
@@ -500,9 +607,10 @@ function switchTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   el.classList.add('active');
-  if (id === 'chart') renderChart();
-  if (id === 'board') renderBoard();
-  if (id === 'log')   renderLogs();
+  if (id === 'chart')  renderChart();
+  if (id === 'board')  renderBoard();
+  if (id === 'log')    renderLogs();
+  if (id === 'roster') renderRoster();
 }
 
 function showToast(msg) {
@@ -513,14 +621,10 @@ function showToast(msg) {
 
 function init() {
   load();
-  const sel  = document.getElementById('selStudent');
-  const fsel = document.getElementById('filterStudent');
-  STUDENTS.forEach(s => {
-    sel.innerHTML  += `<option>${s}</option>`;
-    fsel.innerHTML += `<option value="${s}">${s}</option>`;
-  });
+  rebuildSelects();
   document.getElementById('weekLabel').textContent = '第 ' + state.week + ' 周';
-  renderBoard(); renderLogs();
+  renderBoard();
+  renderLogs();
 }
 init();
 </script>
