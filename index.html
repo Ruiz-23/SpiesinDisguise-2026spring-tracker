@@ -64,7 +64,7 @@
     border-radius: var(--radius-lg);
   }
   .week-label { font-family: 'Orbitron', monospace; font-size: 13px; color: var(--text-secondary); }
-  .week-nav { display: flex; gap: 6px; }
+  .week-nav { display: flex; gap: 6px; align-items: center; }
   .week-nav button {
     border: 0.5px solid var(--border); background: transparent;
     border-radius: var(--radius-md); padding: 5px 13px; font-size: 13px;
@@ -72,15 +72,29 @@
   }
   .week-nav button:hover { background: var(--bg-secondary); }
 
+  /* admin button */
+  .admin-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; padding: 5px 11px;
+    border-radius: var(--radius-md); border: 0.5px solid var(--border);
+    background: transparent; cursor: pointer;
+    color: var(--text-secondary); font-family: 'Noto Sans SC', sans-serif;
+    transition: all .15s;
+  }
+  .admin-btn:hover { background: var(--bg-secondary); }
+  .admin-btn.active { border-color: var(--rocket); color: var(--rocket); background: #e8f0fe; }
+
   /* ── Tabs ── */
   .tabs { display: flex; gap: 2px; border-bottom: 0.5px solid var(--border); margin-bottom: 1rem; }
   .tab {
     padding: 9px 18px; font-size: 13px; cursor: pointer;
     color: var(--text-secondary); border-bottom: 2px solid transparent;
     margin-bottom: -0.5px; transition: color .15s;
+    display: flex; align-items: center; gap: 5px;
   }
   .tab.active { color: var(--text-primary); border-bottom-color: var(--rocket); font-weight: 500; }
   .tab:hover { color: var(--text-primary); }
+  .tab-lock { font-size: 11px; opacity: .5; }
 
   .section { display: none; }
   .section.active { display: block; }
@@ -145,7 +159,8 @@
   .log-form h3 { font-size: 11px; letter-spacing: 1px; margin-bottom: 1rem; color: var(--text-secondary); font-family: 'Orbitron', monospace; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
   .form-group label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-  select, input[type=number], input[type=text] {
+
+  select, input[type=number], input[type=text], input[type=password] {
     width: 100%; padding: 8px 10px; font-size: 14px;
     border: 0.5px solid var(--border); border-radius: var(--radius-md);
     background: var(--bg-primary); color: var(--text-primary);
@@ -163,6 +178,7 @@
   .btn-primary:hover { opacity: .88; background: var(--rocket); }
   .btn-danger { background: #e24b4a; color: #fff; border-color: #e24b4a; font-weight: 500; }
   .btn-danger:hover { opacity: .88; background: #e24b4a; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
 
   /* ── Summary panel ── */
   .stu-summary {
@@ -222,6 +238,30 @@
   .roster-save-btn:hover { background: var(--bg-secondary); }
   .roster-add { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 0.5px solid var(--border); margin-top: 4px; }
 
+  /* ── Locked overlay ── */
+  .locked-overlay { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; gap: 14px; text-align: center; }
+  .locked-icon { font-size: 38px; }
+  .locked-msg { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+  .pw-row { display: flex; gap: 8px; width: 100%; max-width: 300px; }
+  .pw-row input { flex: 1; }
+  .pw-err { font-size: 12px; color: #e24b4a; min-height: 16px; }
+
+  /* ── Password modal ── */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.38);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200; opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .modal-bg.show { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--bg-primary); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.5rem; width: 300px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .modal h3 { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+  .modal p { font-size: 13px; color: var(--text-secondary); }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+
   /* ── Toast ── */
   .toast {
     position: fixed; bottom: 1.5rem; right: 1.5rem;
@@ -237,6 +277,7 @@
     .form-row { grid-template-columns: 1fr 1fr; }
     .student-grid { grid-template-columns: 1fr 1fr; }
     .grid-2 { grid-template-columns: 1fr 1fr; }
+    .stat-strip { grid-template-columns: repeat(3, minmax(0,1fr)); }
   }
   @media (max-width: 360px) {
     .student-grid { grid-template-columns: 1fr; }
@@ -256,6 +297,10 @@
     <div class="week-nav">
       <button onclick="changeWeek(-1)">&#9664;</button>
       <button onclick="changeWeek(1)">&#9654;</button>
+      <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">
+        <span id="lockIcon">🔒</span>
+        <span id="adminLabel">管理员</span>
+      </button>
     </div>
   </div>
 
@@ -263,7 +308,9 @@
     <div class="tab active" onclick="switchTab('board',this)">打卡墙</div>
     <div class="tab" onclick="switchTab('log',this)">记录复习</div>
     <div class="tab" onclick="switchTab('chart',this)">对比图</div>
-    <div class="tab" onclick="switchTab('roster',this)">学生名单</div>
+    <div class="tab" id="rosterTab" onclick="handleRosterTab(this)">
+      学生名单 <span class="tab-lock" id="rosterLockIcon">🔒</span>
+    </div>
   </div>
 
   <!-- BOARD -->
@@ -312,7 +359,6 @@
           </select>
         </div>
       </div>
-
       <div class="stat-strip">
         <div class="stat-box">
           <div class="stat-box-label">累计复习时间</div>
@@ -330,7 +376,6 @@
           <div class="stat-box-unit">分钟/天</div>
         </div>
       </div>
-
       <div id="logList" class="log-list"></div>
     </div>
   </div>
@@ -349,24 +394,38 @@
 
   <!-- ROSTER -->
   <div id="roster" class="section">
-    <div class="roster-panel">
-      <div class="roster-hd">
-        <span class="roster-hd-title">学生名单管理</span>
-        <span style="font-size:12px;color:var(--text-secondary)" id="rosterCount"></span>
-      </div>
-      <div class="roster-list" id="rosterList"></div>
-      <div class="roster-add">
-        <input type="text" id="newNameInput" placeholder="输入新学生姓名" style="flex:1">
-        <button class="btn btn-primary" onclick="addStudent()" style="white-space:nowrap">+ 添加</button>
-      </div>
+    <div class="roster-panel" id="rosterPanel">
+      <div id="rosterInner"></div>
     </div>
-    <p style="font-size:12px;color:var(--text-secondary);text-align:center;padding-bottom:.5rem">修改姓名后点击「保存」，删除学生将同时删除其所有记录</p>
+    <p id="rosterHint" style="font-size:12px;color:var(--text-secondary);text-align:center;padding-bottom:.5rem;display:none">
+      修改姓名后点击「保存」，删除学生将同时删除其所有记录
+    </p>
+  </div>
+</div>
+
+<!-- Password modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>🔐 管理员验证</h3>
+    <p>请输入管理员密码以编辑学生名单</p>
+    <input type="password" id="pwInput" placeholder="输入密码" onkeydown="if(event.key==='Enter')submitPw()">
+    <div class="pw-err" id="pwErr"></div>
+    <div class="modal-btns">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="submitPw()">确认</button>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+/* ═══════════════════════════════════════════
+   ★  CHANGE THIS TO YOUR OWN PASSWORD  ★
+   ═══════════════════════════════════════════ */
+const ADMIN_PASSWORD = 'spies2025';
+/* ═══════════════════════════════════════════ */
+
 const DEFAULT_STUDENTS = [
   '欧阳逸忱','李思斓','李明泽','于泓念','白安晴',
   '陈奕昕(仔仔)','叶元培','孙沐泽','朱语桐','赵希豪',
@@ -374,14 +433,13 @@ const DEFAULT_STUDENTS = [
 ];
 const COLORS = { rocket:'#1a6ef5', cheetah:'#d97b10', sloth:'#5a9e4e', champ:'#f5a623' };
 
-let state = { week: 1, logs: [], students: [...DEFAULT_STUDENTS] };
+let isAdmin = false;
+let state   = { week: 1, logs: [], students: [...DEFAULT_STUDENTS] };
 
-function save() {
-  try { localStorage.setItem('sid_v9', JSON.stringify(state)); } catch(e) {}
-}
+function save() { try { localStorage.setItem('sid_v10', JSON.stringify(state)); } catch(e) {} }
 function load() {
   try {
-    const d = localStorage.getItem('sid_v9');
+    const d = localStorage.getItem('sid_v10');
     if (d) {
       const p = JSON.parse(d);
       state = { ...state, ...p };
@@ -390,13 +448,10 @@ function load() {
   } catch(e) {}
 }
 
-/* One log entry per student per week: { id, week, student, minutes, days }
-   "days" = total number of days the student reviewed that week (1–7).
-   All three displayed values (总天数 input / 累计复习天数 / log badge) use this same field. */
-
+/* ── Data helpers ── */
 function getSummary(w) {
   const logs = state.logs.filter(l => l.week === w);
-  const map = {};
+  const map  = {};
   state.students.forEach(s => { map[s] = { minutes: 0, days: 0 }; });
   logs.forEach(l => {
     if (map[l.student] !== undefined) {
@@ -411,9 +466,9 @@ function getSummary(w) {
 
 function getTier(rank, total) {
   const top = Math.ceil(total / 3), mid = Math.ceil(2 * total / 3);
-  if (rank === 1)    return 'champ';
-  if (rank <= top)   return 'rocket';
-  if (rank <= mid)   return 'cheetah';
+  if (rank === 1)   return 'champ';
+  if (rank <= top)  return 'rocket';
+  if (rank <= mid)  return 'cheetah';
   return 'sloth';
 }
 
@@ -430,6 +485,68 @@ function extraDecor(tier) {
   return '';
 }
 
+/* ── Admin ── */
+function toggleAdmin() {
+  if (isAdmin) {
+    isAdmin = false;
+    updateAdminUI();
+    if (document.getElementById('roster').classList.contains('active')) renderRoster();
+    showToast('已退出管理员模式');
+  } else {
+    openModal();
+  }
+}
+
+function updateAdminUI() {
+  const btn        = document.getElementById('adminBtn');
+  const lockIcon   = document.getElementById('lockIcon');
+  const adminLabel = document.getElementById('adminLabel');
+  const rosterLock = document.getElementById('rosterLockIcon');
+  if (isAdmin) {
+    btn.classList.add('active');
+    lockIcon.textContent   = '🔓';
+    adminLabel.textContent = '管理中';
+    rosterLock.style.display = 'none';
+  } else {
+    btn.classList.remove('active');
+    lockIcon.textContent   = '🔒';
+    adminLabel.textContent = '管理员';
+    rosterLock.style.display = '';
+  }
+}
+
+function openModal() {
+  document.getElementById('modalBg').classList.add('show');
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwErr').textContent = '';
+  setTimeout(() => document.getElementById('pwInput').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('show');
+}
+
+function submitPw() {
+  const val = document.getElementById('pwInput').value;
+  if (val === ADMIN_PASSWORD) {
+    isAdmin = true;
+    closeModal();
+    updateAdminUI();
+    if (document.getElementById('roster').classList.contains('active')) renderRoster();
+    showToast('已进入管理员模式 🔓');
+  } else {
+    document.getElementById('pwErr').textContent = '密码错误，请重试';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function handleRosterTab(el) {
+  if (!isAdmin) { openModal(); return; }
+  switchTab('roster', el);
+}
+
+/* ── Selects ── */
 function rebuildSelects() {
   const sel  = document.getElementById('selStudent');
   const fsel = document.getElementById('filterStudent');
@@ -444,6 +561,7 @@ function rebuildSelects() {
   if (state.students.includes(prevFsel)) fsel.value = prevFsel;
 }
 
+/* ── Render functions ── */
 function renderBoard() {
   const data   = getSummary(state.week);
   const n      = state.students.length || 1;
@@ -485,7 +603,7 @@ function renderLogs() {
   document.getElementById('ss-avg').textContent     = avg;
 
   const sorted = [...filtered].sort((a, b) => b.minutes - a.minutes);
-  const el = document.getElementById('logList');
+  const el     = document.getElementById('logList');
   if (!sorted.length) { el.innerHTML = '<div class="empty">本周暂无记录</div>'; return; }
   el.innerHTML = sorted.map(l => `<div class="log-item">
     <span class="days-badge">共${l.days}天</span>
@@ -529,16 +647,58 @@ function renderChart() {
 }
 
 function renderRoster() {
-  document.getElementById('rosterCount').textContent = `共 ${state.students.length} 名学生`;
-  document.getElementById('rosterList').innerHTML = state.students.map((s, i) => `
-    <div class="roster-row">
-      <span class="roster-num">${i + 1}</span>
-      <input type="text" class="roster-input" value="${s}" id="ri_${i}" onkeydown="if(event.key==='Enter')saveStudent(${i})">
-      <button class="roster-save-btn" onclick="saveStudent(${i})">保存</button>
-      <button class="btn btn-danger" style="padding:4px 8px;font-size:12px" onclick="removeStudent(${i})">删除</button>
-    </div>`).join('');
+  const hint = document.getElementById('rosterHint');
+
+  if (!isAdmin) {
+    document.getElementById('rosterInner').innerHTML = `
+      <div class="locked-overlay">
+        <div class="locked-icon">🔒</div>
+        <div class="locked-msg">此页面仅管理员可编辑<br>请点击右上角「管理员」按钮登录</div>
+        <div class="pw-row">
+          <input type="password" id="inlinepw" placeholder="输入密码" onkeydown="if(event.key==='Enter')inlineLogin()">
+          <button class="btn btn-primary btn-sm" onclick="inlineLogin()">登录</button>
+        </div>
+        <div class="pw-err" id="inlinePwErr"></div>
+      </div>`;
+    hint.style.display = 'none';
+    return;
+  }
+
+  hint.style.display = 'block';
+  document.getElementById('rosterInner').innerHTML = `
+    <div class="roster-hd">
+      <span class="roster-hd-title">学生名单管理</span>
+      <span style="font-size:12px;color:var(--text-secondary)">${state.students.length} 名学生</span>
+    </div>
+    <div class="roster-list">
+      ${state.students.map((s, i) => `
+        <div class="roster-row">
+          <span class="roster-num">${i + 1}</span>
+          <input type="text" class="roster-input" value="${s}" id="ri_${i}" onkeydown="if(event.key==='Enter')saveStudent(${i})">
+          <button class="roster-save-btn" onclick="saveStudent(${i})">保存</button>
+          <button class="btn btn-danger" style="padding:4px 8px;font-size:12px" onclick="removeStudent(${i})">删除</button>
+        </div>`).join('')}
+    </div>
+    <div class="roster-add">
+      <input type="text" id="newNameInput" placeholder="输入新学生姓名" style="flex:1">
+      <button class="btn btn-primary" onclick="addStudent()" style="white-space:nowrap">+ 添加</button>
+    </div>`;
 }
 
+function inlineLogin() {
+  const val = document.getElementById('inlinepw').value;
+  if (val === ADMIN_PASSWORD) {
+    isAdmin = true;
+    updateAdminUI();
+    renderRoster();
+    showToast('已进入管理员模式 🔓');
+  } else {
+    document.getElementById('inlinePwErr').textContent = '密码错误，请重试';
+    document.getElementById('inlinepw').value = '';
+  }
+}
+
+/* ── Roster actions ── */
 function saveStudent(i) {
   const val = document.getElementById('ri_' + i).value.trim();
   if (!val) { showToast('姓名不能为空'); return; }
@@ -569,6 +729,7 @@ function addStudent() {
   showToast('已添加 ✓');
 }
 
+/* ── Log actions ── */
 function logReview() {
   const student = document.getElementById('selStudent').value;
   const minutes = parseInt(document.getElementById('inpMinutes').value) || 0;
@@ -576,7 +737,7 @@ function logReview() {
   if (!student || minutes < 1 || days < 1 || days > 7) { showToast('请正确填写所有字段'); return; }
 
   const existing = state.logs.findIndex(l => l.week === state.week && l.student === student);
-  const entry = { id: Date.now() + '', week: state.week, student, minutes, days };
+  const entry    = { id: Date.now() + '', week: state.week, student, minutes, days };
   if (existing >= 0) {
     if (!confirm(`${student} 本周已有记录，是否覆盖？`)) return;
     state.logs[existing] = entry;
@@ -594,6 +755,7 @@ function deleteLog(id) {
   save(); renderBoard(); renderLogs(); renderChart();
 }
 
+/* ── Navigation ── */
 function changeWeek(d) {
   const nw = state.week + d;
   if (nw < 1 || nw > 52) return;
@@ -625,6 +787,7 @@ function init() {
   document.getElementById('weekLabel').textContent = '第 ' + state.week + ' 周';
   renderBoard();
   renderLogs();
+  updateAdminUI();
 }
 init();
 </script>
