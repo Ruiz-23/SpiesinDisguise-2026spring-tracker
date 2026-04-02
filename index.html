@@ -47,7 +47,6 @@
 
   .app { max-width: 960px; margin: 0 auto; padding: 1rem 1rem 2rem; }
 
-  /* ── Header ── */
   .header { text-align: center; padding: 1.8rem 0 1rem; }
   .header h1 {
     font-family: 'Orbitron', monospace;
@@ -56,7 +55,6 @@
   }
   .header p { font-size: 12px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 1px; }
 
-  /* ── Week bar ── */
   .week-bar {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
     margin-bottom: 1rem; padding: 10px 16px;
@@ -72,19 +70,17 @@
   }
   .week-nav button:hover { background: var(--bg-secondary); }
 
-  /* admin button */
   .admin-btn {
     display: flex; align-items: center; gap: 5px;
     font-size: 11px; padding: 5px 11px;
     border-radius: var(--radius-md); border: 0.5px solid var(--border);
     background: transparent; cursor: pointer;
     color: var(--text-secondary); font-family: 'Noto Sans SC', sans-serif;
-    transition: all .15s;
+    transition: all .15s; white-space: nowrap;
   }
   .admin-btn:hover { background: var(--bg-secondary); }
   .admin-btn.active { border-color: var(--rocket); color: var(--rocket); background: #e8f0fe; }
 
-  /* ── Tabs ── */
   .tabs { display: flex; gap: 2px; border-bottom: 0.5px solid var(--border); margin-bottom: 1rem; }
   .tab {
     padding: 9px 18px; font-size: 13px; cursor: pointer;
@@ -99,7 +95,6 @@
   .section { display: none; }
   .section.active { display: block; }
 
-  /* ── Board ── */
   .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 1rem; }
   .metric-card { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 13px 16px; }
   .metric-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
@@ -115,7 +110,6 @@
   .s-card:hover { border-color: var(--border-md); transform: translateY(-1px); }
   .s-card.champ { border-color: var(--champ); border-width: 1.5px; }
 
-  /* ── Animated icons ── */
   .icon-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .anim-icon { font-size: 30px; display: block; line-height: 1; }
 
@@ -151,7 +145,6 @@
   .s-bar-wrap { height: 4px; border-radius: 2px; background: var(--border); margin-top: 7px; overflow: hidden; }
   .s-bar-fill { height: 100%; border-radius: 2px; transition: width .7s cubic-bezier(.4,0,.2,1); }
 
-  /* ── Log form ── */
   .log-form {
     background: var(--bg-primary); border: 0.5px solid var(--border);
     border-radius: var(--radius-lg); padding: 1.2rem; margin-bottom: 1rem;
@@ -175,12 +168,11 @@
   }
   .btn:hover { background: var(--bg-secondary); }
   .btn-primary { background: var(--rocket); color: #fff; border-color: var(--rocket); font-weight: 500; }
-  .btn-primary:hover { opacity: .88; background: var(--rocket); }
+  .btn-primary:hover { opacity: .88; }
   .btn-danger { background: #e24b4a; color: #fff; border-color: #e24b4a; font-weight: 500; }
-  .btn-danger:hover { opacity: .88; background: #e24b4a; }
+  .btn-danger:hover { opacity: .88; }
   .btn-sm { padding: 4px 10px; font-size: 12px; }
 
-  /* ── Summary panel ── */
   .stu-summary {
     background: var(--bg-primary); border: 0.5px solid var(--border);
     border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem;
@@ -201,7 +193,6 @@
   .stat-box-unit { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
   .stat-box.highlight .stat-box-val { color: var(--rocket); }
 
-  /* ── Log list ── */
   .log-list { max-height: 320px; overflow-y: auto; }
   .log-item {
     display: flex; align-items: center; padding: 9px 14px;
@@ -217,7 +208,6 @@
   .log-del:hover { opacity: 1; color: #e24b4a; }
   .empty { text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 13px; }
 
-  /* ── Chart ── */
   .chart-wrap { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem; margin-bottom: 1rem; }
   .chart-title { font-size: 11px; letter-spacing: .8px; color: var(--text-secondary); margin-bottom: 1rem; font-family: 'Orbitron', monospace; }
   .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
@@ -239,30 +229,32 @@
   .roster-add { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 0.5px solid var(--border); margin-top: 4px; }
 
   /* ── Locked overlay ── */
-  .locked-overlay { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; gap: 14px; text-align: center; }
-  .locked-icon { font-size: 38px; }
-  .locked-msg { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+  .locked-overlay {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 3rem 1rem; gap: 16px; text-align: center;
+  }
+  .locked-icon { font-size: 42px; }
+  .locked-msg { font-size: 14px; color: var(--text-secondary); line-height: 1.8; }
   .pw-row { display: flex; gap: 8px; width: 100%; max-width: 300px; }
   .pw-row input { flex: 1; }
-  .pw-err { font-size: 12px; color: #e24b4a; min-height: 16px; }
+  .pw-err { font-size: 12px; color: #e24b4a; min-height: 18px; }
 
   /* ── Password modal ── */
   .modal-bg {
-    position: fixed; inset: 0; background: rgba(0,0,0,.38);
+    position: fixed; inset: 0; background: rgba(0,0,0,.4);
     display: flex; align-items: center; justify-content: center;
     z-index: 200; opacity: 0; pointer-events: none; transition: opacity .2s;
   }
   .modal-bg.show { opacity: 1; pointer-events: auto; }
   .modal {
     background: var(--bg-primary); border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg); padding: 1.5rem; width: 300px;
+    border-radius: var(--radius-lg); padding: 1.6rem; width: 300px;
     display: flex; flex-direction: column; gap: 12px;
   }
   .modal h3 { font-size: 15px; font-weight: 500; color: var(--text-primary); }
   .modal p { font-size: 13px; color: var(--text-secondary); }
   .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
 
-  /* ── Toast ── */
   .toast {
     position: fixed; bottom: 1.5rem; right: 1.5rem;
     background: var(--rocket); color: #fff;
@@ -272,12 +264,10 @@
   }
   .toast.show { opacity: 1; }
 
-  /* ── Responsive ── */
   @media (max-width: 580px) {
     .form-row { grid-template-columns: 1fr 1fr; }
     .student-grid { grid-template-columns: 1fr 1fr; }
     .grid-2 { grid-template-columns: 1fr 1fr; }
-    .stat-strip { grid-template-columns: repeat(3, minmax(0,1fr)); }
   }
   @media (max-width: 360px) {
     .student-grid { grid-template-columns: 1fr; }
@@ -392,9 +382,9 @@
     </div>
   </div>
 
-  <!-- ROSTER -->
+  <!-- ROSTER — always starts locked -->
   <div id="roster" class="section">
-    <div class="roster-panel" id="rosterPanel">
+    <div class="roster-panel">
       <div id="rosterInner"></div>
     </div>
     <p id="rosterHint" style="font-size:12px;color:var(--text-secondary);text-align:center;padding-bottom:.5rem;display:none">
@@ -403,12 +393,13 @@
   </div>
 </div>
 
-<!-- Password modal -->
+<!-- Password modal (triggered by admin button) -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3>🔐 管理员验证</h3>
-    <p>请输入管理员密码以编辑学生名单</p>
-    <input type="password" id="pwInput" placeholder="输入密码" onkeydown="if(event.key==='Enter')submitPw()">
+    <p>请输入管理员密码以进入编辑模式</p>
+    <input type="password" id="pwInput" placeholder="输入密码"
+           onkeydown="if(event.key==='Enter')submitPw()">
     <div class="pw-err" id="pwErr"></div>
     <div class="modal-btns">
       <button class="btn" onclick="closeModal()">取消</button>
@@ -420,11 +411,13 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    ★  CHANGE THIS TO YOUR OWN PASSWORD  ★
-   ═══════════════════════════════════════════ */
+   ═══════════════════════════════════════ */
 const ADMIN_PASSWORD = 'spies2025';
-/* ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════ */
+
+const STORAGE_KEY = 'sid_v11'; /* bumped version — clears all old data */
 
 const DEFAULT_STUDENTS = [
   '欧阳逸忱','李思斓','李明泽','于泓念','白安晴',
@@ -433,13 +426,20 @@ const DEFAULT_STUDENTS = [
 ];
 const COLORS = { rocket:'#1a6ef5', cheetah:'#d97b10', sloth:'#5a9e4e', champ:'#f5a623' };
 
+/* isAdmin is NEVER persisted — resets to false on every page load */
 let isAdmin = false;
 let state   = { week: 1, logs: [], students: [...DEFAULT_STUDENTS] };
 
-function save() { try { localStorage.setItem('sid_v10', JSON.stringify(state)); } catch(e) {} }
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
 function load() {
+  /* Remove any stale keys from previous versions */
+  ['sid_v4','sid_v8','sid_v9','sid_v10'].forEach(k => {
+    try { localStorage.removeItem(k); } catch(e) {}
+  });
   try {
-    const d = localStorage.getItem('sid_v10');
+    const d = localStorage.getItem(STORAGE_KEY);
     if (d) {
       const p = JSON.parse(d);
       state = { ...state, ...p };
@@ -485,11 +485,12 @@ function extraDecor(tier) {
   return '';
 }
 
-/* ── Admin ── */
+/* ── Admin logic — isAdmin is session-only, never saved ── */
 function toggleAdmin() {
   if (isAdmin) {
     isAdmin = false;
     updateAdminUI();
+    /* re-render roster to show locked screen */
     if (document.getElementById('roster').classList.contains('active')) renderRoster();
     showToast('已退出管理员模式');
   } else {
@@ -498,20 +499,18 @@ function toggleAdmin() {
 }
 
 function updateAdminUI() {
-  const btn        = document.getElementById('adminBtn');
-  const lockIcon   = document.getElementById('lockIcon');
-  const adminLabel = document.getElementById('adminLabel');
-  const rosterLock = document.getElementById('rosterLockIcon');
+  const btn  = document.getElementById('adminBtn');
+  const icon = document.getElementById('lockIcon');
+  const lbl  = document.getElementById('adminLabel');
+  const rl   = document.getElementById('rosterLockIcon');
   if (isAdmin) {
     btn.classList.add('active');
-    lockIcon.textContent   = '🔓';
-    adminLabel.textContent = '管理中';
-    rosterLock.style.display = 'none';
+    icon.textContent = '🔓'; lbl.textContent = '管理中';
+    rl.style.display = 'none';
   } else {
     btn.classList.remove('active');
-    lockIcon.textContent   = '🔒';
-    adminLabel.textContent = '管理员';
-    rosterLock.style.display = '';
+    icon.textContent = '🔒'; lbl.textContent = '管理员';
+    rl.style.display = '';
   }
 }
 
@@ -519,12 +518,9 @@ function openModal() {
   document.getElementById('modalBg').classList.add('show');
   document.getElementById('pwInput').value = '';
   document.getElementById('pwErr').textContent = '';
-  setTimeout(() => document.getElementById('pwInput').focus(), 100);
+  setTimeout(() => document.getElementById('pwInput').focus(), 120);
 }
-
-function closeModal() {
-  document.getElementById('modalBg').classList.remove('show');
-}
+function closeModal() { document.getElementById('modalBg').classList.remove('show'); }
 
 function submitPw() {
   const val = document.getElementById('pwInput').value;
@@ -541,8 +537,12 @@ function submitPw() {
   }
 }
 
+/* clicking the roster tab while locked → open the password modal */
 function handleRosterTab(el) {
-  if (!isAdmin) { openModal(); return; }
+  if (!isAdmin) {
+    openModal();
+    return;   /* do NOT switch tab — stay on current page */
+  }
   switchTab('roster', el);
 }
 
@@ -550,18 +550,18 @@ function handleRosterTab(el) {
 function rebuildSelects() {
   const sel  = document.getElementById('selStudent');
   const fsel = document.getElementById('filterStudent');
-  const prevSel = sel.value, prevFsel = fsel.value;
+  const ps = sel.value, pf = fsel.value;
   sel.innerHTML  = '';
   fsel.innerHTML = '<option value="all">全班汇总</option>';
   state.students.forEach(s => {
     sel.innerHTML  += `<option>${s}</option>`;
     fsel.innerHTML += `<option value="${s}">${s}</option>`;
   });
-  if (state.students.includes(prevSel))  sel.value  = prevSel;
-  if (state.students.includes(prevFsel)) fsel.value = prevFsel;
+  if (state.students.includes(ps)) sel.value  = ps;
+  if (state.students.includes(pf)) fsel.value = pf;
 }
 
-/* ── Render functions ── */
+/* ── Render board ── */
 function renderBoard() {
   const data   = getSummary(state.week);
   const n      = state.students.length || 1;
@@ -589,6 +589,7 @@ function renderBoard() {
   }).join('');
 }
 
+/* ── Render logs ── */
 function renderLogs() {
   const filter   = document.getElementById('filterStudent').value;
   const weekLogs = state.logs.filter(l => l.week === state.week);
@@ -603,7 +604,7 @@ function renderLogs() {
   document.getElementById('ss-avg').textContent     = avg;
 
   const sorted = [...filtered].sort((a, b) => b.minutes - a.minutes);
-  const el     = document.getElementById('logList');
+  const el = document.getElementById('logList');
   if (!sorted.length) { el.innerHTML = '<div class="empty">本周暂无记录</div>'; return; }
   el.innerHTML = sorted.map(l => `<div class="log-item">
     <span class="days-badge">共${l.days}天</span>
@@ -613,6 +614,7 @@ function renderLogs() {
   </div>`).join('');
 }
 
+/* ── Render chart ── */
 function renderChart() {
   const data    = getSummary(state.week);
   const n       = state.students.length || 1;
@@ -646,16 +648,19 @@ function renderChart() {
   }).join('');
 }
 
+/* ── Render roster — locked or unlocked ── */
 function renderRoster() {
   const hint = document.getElementById('rosterHint');
 
   if (!isAdmin) {
+    /* Always show the locked screen when not authenticated */
     document.getElementById('rosterInner').innerHTML = `
       <div class="locked-overlay">
         <div class="locked-icon">🔒</div>
-        <div class="locked-msg">此页面仅管理员可编辑<br>请点击右上角「管理员」按钮登录</div>
+        <div class="locked-msg">此页面仅管理员可编辑<br>请在下方输入密码，或点击右上角「管理员」按钮</div>
         <div class="pw-row">
-          <input type="password" id="inlinepw" placeholder="输入密码" onkeydown="if(event.key==='Enter')inlineLogin()">
+          <input type="password" id="inlinepw" placeholder="输入管理员密码"
+                 onkeydown="if(event.key==='Enter')inlineLogin()">
           <button class="btn btn-primary btn-sm" onclick="inlineLogin()">登录</button>
         </div>
         <div class="pw-err" id="inlinePwErr"></div>
@@ -664,17 +669,19 @@ function renderRoster() {
     return;
   }
 
+  /* Authenticated — show editable list */
   hint.style.display = 'block';
   document.getElementById('rosterInner').innerHTML = `
     <div class="roster-hd">
       <span class="roster-hd-title">学生名单管理</span>
-      <span style="font-size:12px;color:var(--text-secondary)">${state.students.length} 名学生</span>
+      <span style="font-size:12px;color:var(--text-secondary)">共 ${state.students.length} 名学生</span>
     </div>
     <div class="roster-list">
       ${state.students.map((s, i) => `
         <div class="roster-row">
           <span class="roster-num">${i + 1}</span>
-          <input type="text" class="roster-input" value="${s}" id="ri_${i}" onkeydown="if(event.key==='Enter')saveStudent(${i})">
+          <input type="text" class="roster-input" value="${s}" id="ri_${i}"
+                 onkeydown="if(event.key==='Enter')saveStudent(${i})">
           <button class="roster-save-btn" onclick="saveStudent(${i})">保存</button>
           <button class="btn btn-danger" style="padding:4px 8px;font-size:12px" onclick="removeStudent(${i})">删除</button>
         </div>`).join('')}
@@ -698,7 +705,7 @@ function inlineLogin() {
   }
 }
 
-/* ── Roster actions ── */
+/* ── Roster CRUD ── */
 function saveStudent(i) {
   const val = document.getElementById('ri_' + i).value.trim();
   if (!val) { showToast('姓名不能为空'); return; }
@@ -729,7 +736,7 @@ function addStudent() {
   showToast('已添加 ✓');
 }
 
-/* ── Log actions ── */
+/* ── Log CRUD ── */
 function logReview() {
   const student = document.getElementById('selStudent').value;
   const minutes = parseInt(document.getElementById('inpMinutes').value) || 0;
@@ -781,13 +788,14 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+/* ── Bootstrap ── */
 function init() {
-  load();
+  load();          /* isAdmin is NOT loaded — always starts as false */
   rebuildSelects();
   document.getElementById('weekLabel').textContent = '第 ' + state.week + ' 周';
+  updateAdminUI(); /* shows 🔒 locked state */
   renderBoard();
   renderLogs();
-  updateAdminUI();
 }
 init();
 </script>
